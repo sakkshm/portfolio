@@ -117,7 +117,7 @@ export const DATA = {
       links: [
         {
           type: "GitHub",
-          href: "https://github.com/sakkshm/json-parse",
+          href: "https://github.com/sakkshm/aether",
           icon: <Icons.github className='size-3' />,
         },
       ],
