@@ -1,5 +1,5 @@
 import { Icons } from "@/components/icons";
-import { HomeIcon, NotebookIcon } from "lucide-react";
+import { HomeIcon, Newspaper, Contact } from "lucide-react";
 
 export const DATA = {
   name: "Saksham Saxena",
@@ -28,7 +28,8 @@ export const DATA = {
   ],
   navbar: [
     { href: "/", icon: HomeIcon, label: "Home" },
-    { href: "/blog", icon: NotebookIcon, label: "Blog" },
+    { href: "/blog", icon: Newspaper, label: "Blog" },
+    { href: "https://dub.sh/sakkshm-resume", icon: Contact, label: "Resume" },
   ],
   contact: {
     email: "saksham.saxena404@gmail.com",
@@ -100,6 +101,23 @@ export const DATA = {
         {
           type: "GitHub",
           href: "https://github.com/fraktal-app",
+          icon: <Icons.github className='size-3' />,
+        },
+      ],
+      image: "",
+    },
+    {
+      title: "Aether",
+      href: "https://github.com/sakkshm/aether",
+      dates: "Nov 2025",
+      active: false,
+      description:
+        "A unified, privacy first memory layer for LLMs to maintain and share context across chats. ",
+      technologies: ["Typescript",  "Chrome Extension", "Chrome Built-In AI", "Vector DB", "RAG"],
+      links: [
+        {
+          type: "GitHub",
+          href: "https://github.com/sakkshm/json-parse",
           icon: <Icons.github className='size-3' />,
         },
       ],
@@ -196,7 +214,7 @@ export const DATA = {
       dates: "Jun 2025",
       active: false,
       description:
-        "Minimal ray tracer written from scratch in C++ featuring materials, lighting, and anti-aliasing — built for learning graphics fundamentals.",
+        "Minimal ray tracer written from scratch in C++ featuring materials, lighting, and anti-aliasing, built for learning graphics fundamentals.",
       technologies: ["C++", "Computer Graphics", "Ray Tracing"],
       links: [
         {
