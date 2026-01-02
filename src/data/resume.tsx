@@ -69,7 +69,7 @@ export const DATA = {
       badges: [],
       location: "Remote / KIET, India",
       title: "Open Source Contributor",
-      logoUrl: "/fosscu.png",
+      logoUrl: "/foss.jpeg",
       start: "Oct 2024",
       end: "Present",
       description:
@@ -82,7 +82,7 @@ export const DATA = {
       school: "KIET Group of Institutions",
       href: "https://kiet.edu",
       degree: "Bachelor of Technology, Information Technology",
-      logoUrl: "/kiet.png",
+      logoUrl: "/kiet.jpeg",
       start: "2024",
       end: "Present",
     },
@@ -91,7 +91,7 @@ export const DATA = {
  projects: [
     {
       title: "Fraktal",
-      href: "https://fraktal.app",
+      href: "https://github.com/fraktal-app/fraktal",
       dates: "Jun 2025 – Present",
       active: true,
       description:
@@ -105,6 +105,23 @@ export const DATA = {
         },
       ],
       image: "",
+    },
+    {
+        title: "Kache",
+        href: "https://github.com/sakkshm/kache",
+        dates: "Dec 2025 – Jan 2026",
+        active: false,
+        description:
+            "Redis-like in-memory key-value store built from scratch in C++. Features a single-threaded event loop, intrusive hash tables, sorted sets, TTL expiration, and background thread pool. Designed for learning systems programming and low-latency data structures.",
+        technologies: ["C++", "TCP", "Event Loop", "AVL Trees", "Thread Pool"],
+        links: [
+            {
+            type: "GitHub",
+            href: "https://github.com/sakkshm/kache",
+            icon: <Icons.github className='size-3' />,
+            },
+        ],
+        image: "",
     },
     {
       title: "Aether",

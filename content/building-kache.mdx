@@ -1,0 +1,279 @@
+---
+title: "Kache: Building a Redis like In-Memory KV Store in C++"
+publishedAt: "2026-01-02"
+summary: "Kache is a Redis-like in-memory key-value store built from scratch in C++."
+---
+
+Over the last few weeks, I decided to build **Kache**, a Redis-like in-memory KV store for cache servers, entirely from scratch in C++. The goal wasn’t just to clone Redis, but to deeply understand **how real cache servers work under the hood**: how they store data efficiently, to how they handle multiple clients without blocking, and how they manage time-based expiration.
+
+At a high level, Kache is a single-threaded, event-driven TCP server with an in-memory data store and a small background worker pool. All client commands execute on the event loop; anything that might block is deferred.
+
+This blog post is a deep dive into Kache’s internals: what I built, how it works, and what I learned along the way. I’ll walk through the architecture, core data structures, command execution, timers, background threads, and the performance characteristics of the system.
+
+You can check out the code on GitHub: [sakkshm/kache](https://github.com/sakkshm/kache).
+
+This project was less about “shipping a product” and more about learning systems programming by building something.
+
+## Why Build Kache?
+
+Before diving into the technical details, here’s why I decided to take this project on.
+
+1. **Learn by doing:**
+   Reading about Redis or Memcached only takes you so far. Implementing a cache server forces you to understand the real trade-offs: latency vs complexity, memory layout, blocking vs non-blocking code, and correctness under concurrency.
+
+2. **Understand performance bottlenecks:**
+   In-memory caches are all about low latency. I wanted to see how design choices like event loops, intrusive data structures, and balanced trees actually affect performance.
+
+3. **Experiment with system design ideas:**
+   Redis is extremely optimized and mature. By building a smaller version, I could experiment freely with ideas like TTL heaps, thread pools, and binary protocols.
+
+4. **Hands-on C++ systems programming:**
+   Working with raw pointers, custom allocators, intrusive nodes, and manual memory management gave me a much deeper appreciation for how data layout impacts speed.
+
+## High-Level Architecture
+
+Kache’s architecture is inspired by Redis but intentionally simplified. Clients connect to the server over TCP and send binary-encoded requests. These requests are handled by a single-threaded event loop built on `poll`, which is responsible for reading incoming data, parsing commands, executing them, and managing timers such as key expirations.
+
+All data lives in an in-memory store that implements the core data structures, including hashmaps and sorted sets (ZSets). To ensure the event loop remains fast and predictable, any work that could block or take longer—such as deferred cleanup, expiration handling, or other maintenance tasks—is offloaded to a background thread pool. This design keeps the hot path minimal while still allowing the system to scale in functionality without compromising latency.
+
+## The Event Loop
+
+The **event loop** is the heart of Kache. It uses `poll()` to monitor all active client sockets and processes timers in the same loop.
+
+```cpp
+// Simplified code
+
+while (true) {
+    poll(fds, nfds, timeout);
+
+    for (auto &fd : fds) {
+        if (fd.revents & POLLIN) handle_read(fd);
+        if (fd.revents & POLLOUT) handle_write(fd);
+    }
+
+    process_timers();
+}
+```
+
+A few key design choices here:
+
+- **Non-blocking IO:**
+  All sockets are non-blocking. The event loop never waits on a slow client.
+
+- **Single-threaded execution:**
+  All command execution happens on one thread. This avoids locks entirely on the data structures.
+
+- **Timers in the same loop:**
+  TTL expiration is checked during each iteration, ensuring expired keys are removed promptly.
+
+As long as the loop stays tight, Kache can handle **thousands of concurrent clients efficiently**.
+
+## Protocol Design
+
+Kache uses a **simple Tag-Length-Value based binary protocol**. Every request looks like this:
+
+```
+    [length: 4 bytes][command payload]
+```
+
+Command payload looks like:
+
+```
+    [n strings] (no. of strings) (4 bytes)
+    [len 1]     (len of str 1)   (4 bytes)
+    [str 1]     (string 1)
+    [len 2]     (len of str 2)   (4 bytes)
+    [str 2]     (string 2)
+    .
+    .
+    .
+    [len n]     (len of str n)   (4 bytes)
+    [str n]
+
+```
+
+Response looks like:
+
+```
+    [4 bytes]   resp. length
+    [4 bytes]   status code
+    [n bytes]   response/data
+```
+
+This makes parsing deterministic and avoids the ambiguity of line-based or delimiter-based protocols.
+
+```cpp
+if (conn.read_buf.size() >= 4) {
+    uint32_t len = read_u32(conn.read_buf);
+    if (conn.read_buf.size() >= 4 + len) {
+        parse_command(conn.read_buf.substr(4, len));
+    }
+}
+```
+
+The choice of binary over text was deliberate:
+
+- Faster parsing
+- No string tokenization overhead
+- Easy to reason about correctness
+
+For a learning project, this keeps things clean and predictable.
+
+## Hashmap Internals
+
+The backbone of Kache is an **intrusive hash table**. Instead of `std::unordered_map`, each object embeds its own hash node:
+
+```cpp
+struct HNode {
+    HNode* next;
+    uint64_t hcode;
+};
+```
+
+Key points:
+
+- **Intrusive design** reduces allocations
+- **Linked-list chaining** handles collisions
+- **Power-of-two buckets** allow fast masking instead of modulo
+
+Lookup is straightforward:
+
+```cpp
+size_t pos = key->hcode & table.mask;
+for (HNode* n = table.tab[pos]; n; n = n->next) {
+    if (eq(n, key)) return n;
+}
+```
+
+This design mirrors how Redis internally manages many of its core structures.
+
+## Sorted Sets (ZSets)
+
+Sorted sets were one of the most interesting parts to implement.
+
+Each ZSet combines:
+
+- **Hashmap** → O(1) lookup by name
+- **AVL tree** → ordered traversal by `(score, name)`
+
+Insertion looks like this:
+
+```cpp
+ZNode *node = znode_new(name, len, score);
+hm_insert(&zset->hmap, &node->hmapNode);
+tree_insert(zset, node);
+```
+
+And queries support offsets and limits:
+
+```cpp
+zquery(score, name, offset, limit);
+```
+
+This hybrid structure is exactly why ZSets are so powerful as they allow fast access and ordered iteration at the same time.
+
+## Expiration and Timers
+
+Kache supports TTL using a **min-heap of expiration times**:
+
+```cpp
+struct HeapItem {
+    uint64_t expire_at;
+    size_t* ref;
+};
+```
+
+How it works:
+
+- Earliest expiration sits at the top
+- `process_timers()` pops expired entries
+- Updates adjust heap positions efficiently
+
+This avoids periodic scans of all keys and keeps expiration costs proportional to actual expirations.
+
+## Background Thread Pool
+
+One subtle issue with caches is **memory deallocation latency**. Freeing large structures can block the main loop.
+
+To avoid this, Kache uses a small thread pool:
+
+```cpp
+thread_pool.enqueue([obj] {
+    delete obj;
+});
+```
+
+This ensures:
+
+- Event loop stays responsive
+- Deletions don’t cause latency spikes
+- Cleanup work happens asynchronously
+
+It’s a simple idea, but it makes a big difference under load.
+
+## Supported Commands
+
+Kache supports a minimal but useful command set.
+
+| Command                                        | Description                                     |
+| ---------------------------------------------- | ----------------------------------------------- |
+| `set <key> <value>`                            | Set a value for a key                           |
+| `get <key>`                                    | Retrieve the value of a key                     |
+| `del <key>`                                    | Delete a key and its value                      |
+| `expire <key> <time>`                          | Set a TTL for a key (time in milliseconds)      |
+| `persist <key>`                                | Remove the TTL from a key                       |
+| `zadd <key> <score> <name>`                    | Add a `(name, score)` pair to a sorted set      |
+| `zrem <key> <name>`                            | Remove an entry from the sorted set             |
+| `zscore <key> <name>`                          | Get the score associated with a name            |
+| `zquery <key> <score> <name> <offset> <limit>` | Query a sorted set with ordering and pagination |
+
+Each command is designed to execute in predictable time with minimal allocations.
+
+## What I Learned
+
+Building Kache turned into a crash course in systems programming:
+
+- Event-driven architecture
+- Designing lock-free data structures
+- Memory layout and cache locality
+- TTL scheduling with heaps
+- Thread pool fundamentals
+- Protocol design and framing
+
+It felt like building a **miniature Redis engine**, and that made the internals of real-world systems click in a way books never quite managed.
+
+## Benchmarks
+
+I ran a **production-mode benchmark** with `-O3`, logging disabled, and a mixed workload over persistent TCP connections. All tests were run on a single machine (CPU model), with clients on the same host, using persistent connections.
+
+### Results
+
+| Metric          | Value         |
+| --------------- | ------------- |
+| Total requests  | 1,220,000     |
+| Throughput      | 116,541 req/s |
+| Average latency | 0.0296 ms     |
+| Min latency     | 0.0146 ms     |
+| Max latency     | 0.5257 ms     |
+| p95 latency     | 0.0496 ms     |
+| p99 latency     | 0.0546 ms     |
+
+### Observations
+
+- **Sub-0.03 ms average latency** confirms that most operations stay in CPU cache.
+- **Tight p95 and p99 values** indicate low jitter and predictable execution.
+- Rare latency spikes were tied to bulk cleanup or timer bursts.
+- Single-thread throughput crossed **100k req/s**, validating the event-loop design.
+
+For a from-scratch C++ cache, this was extremely satisfying to see.
+
+## Closing Thoughts
+
+Kache taught me more than I expected:
+
+1. How high-performance caches really work
+2. Why data structure choices matter so much
+3. How memory management impacts latency
+4. How real systems balance simplicity and performance
+
+It’s not production-ready and that’s fine. The real value was in **building it end-to-end** and understanding each piece deeply.
