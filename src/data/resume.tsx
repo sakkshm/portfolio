@@ -90,10 +90,29 @@ export const DATA = {
 
  projects: [
     {
+        title: "Spectra",
+        href: "https://github.com/sakkshm/spectra",
+        dates: "Jan 2026",
+        active: false,
+        description:
+            "A Shazam-style audio fingerprinting and recognition engine built from scratch in Python.",
+        technologies: [
+            "Python", "Signal Processing", "STFT", "Audio Fingerprinting", "PostgreSQL", "Hashing"
+        ],
+        links: [
+            {
+                type: "GitHub",
+                href: "https://github.com/sakkshm/spectra",
+                icon: <Icons.github className="size-3" />,
+            },
+        ],
+        image: "",
+    },
+    {
       title: "Fraktal",
       href: "https://github.com/fraktal-app/fraktal",
-      dates: "Jun 2025 – Present",
-      active: true,
+      dates: "Jun 2025 – Jul 2025",
+      active: false,
       description:
         "Web3 automation platform enabling event-driven workflows between smart contracts and APIs. Built Node.js backend for triggers, PostgreSQL metadata layer, and Web3 integrations.",
       technologies: ["Node.js", "Express", "PostgreSQL", "Web3", "TypeScript"],
