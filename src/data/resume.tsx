@@ -89,6 +89,34 @@ export const DATA = {
   ],
 
  projects: [
+        {
+        title: "SunoHQ",
+        href: "https://github.com/sakkshm/sunoHQ",
+        dates: "Feb 2026",
+        active: true,
+        description:
+            "A multilingual voice AI platform for deploying business-aware conversational agents with a full STT → RAG → LLM → TTS pipeline.",
+        technologies: [
+            "Python",
+            "Voice AI",
+            "RAG",
+            "Vector Databases",
+            "Telegram Bots"
+        ],
+        links: [
+            {
+                type: "GitHub",
+                href: "https://github.com/sakkshm/sunoHQ",
+                icon: <Icons.github className="size-3" />,
+            },
+            {
+                type: "Live",
+                href: "https://sunohq.vercel.app/",
+                icon: <Icons.globe className="size-3" />,
+            },
+        ],
+        image: "",
+    },
     {
         title: "Spectra",
         href: "https://github.com/sakkshm/spectra",
