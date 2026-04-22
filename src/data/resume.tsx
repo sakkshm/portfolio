@@ -89,7 +89,26 @@ export const DATA = {
   ],
 
  projects: [
-        {
+    {
+        title: "Bastion",
+        href: "https://github.com/sakkshm/bastion",
+        dates: "Apr 2026",
+        active: true,
+        description:
+            "A sandboxed execution environment for AI agents to run untrusted code and manage files with a REST + WebSocket interface.",
+        technologies: [
+            "Go", "Docker", "REST APIs", "WebSockets", "SQLite", "Linux Containers", "System Design", "Concurrency"
+        ],
+        links: [
+            {
+                type: "GitHub",
+                href: "https://github.com/sakkshm/bastion",
+                icon: <Icons.github className="size-3" />,
+            },
+        ],
+        image: "",
+    },
+    {
         title: "SunoHQ",
         href: "https://github.com/sakkshm/sunoHQ",
         dates: "Feb 2026",
@@ -205,23 +224,6 @@ export const DATA = {
       image: "",
     },
     {
-      title: "Lumio",
-      href: "https://github.com/sakkshm/lumio",
-      dates: "Oct 2025",
-      active: false,
-      description:
-        "AI-powered autonomous community maintainer that lives forever on the Permaweb. Designed for self-sustaining open-source projects.",
-      technologies: ["TypeScript", "AI", "Arweave", "Permaweb"],
-      links: [
-        {
-          type: "GitHub",
-          href: "https://github.com/sakkshm/lumio",
-          icon: <Icons.github className='size-3' />,
-        },
-      ],
-      image: "",
-    },
-    {
       title: "TweetMap",
       href: "https://github.com/sakkshm/tweetmap",
       dates: "Oct 2025",
@@ -284,23 +286,6 @@ export const DATA = {
         {
           type: "GitHub",
           href: "https://github.com/sakkshm/tinyraytracer",
-          icon: <Icons.github className='size-3' />,
-        },
-      ],
-      image: "",
-    },
-    {
-      title: "MUN Website",
-      href: "https://github.com/sakkshm/MUN-website",
-      dates: "Mar 2025",
-      active: false,
-      description:
-        "Dynamic website for KIET MUN handling 250+ registrations with Razorpay integration and JWT-based authentication.",
-      technologies: ["JavaScript", "Node.js", "JWT", "Razorpay"],
-      links: [
-        {
-          type: "GitHub",
-          href: "https://github.com/sakkshm/MUN-website",
           icon: <Icons.github className='size-3' />,
         },
       ],
