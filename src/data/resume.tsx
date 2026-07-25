@@ -13,18 +13,21 @@ export const DATA = {
     "I'm a CS student who loves learning about systems and programming. I enjoy building projects, contributing to open-source, and diving deep into low-level programming, backend design, and DevOps. Currently working on Fraktal: a Web3 automation platform, and contributing to open source at FOSSCU-K.",
   avatarUrl: "/profile.jpg",
   skills: [
-    "C",
-    "C++",
-    "Go",
+    "Python",
+    "Golang",
     "TypeScript",
-    "Node.js",
-    "React",
-    "Next.js",
+    "JavaScript",
+    "C++",
+    "SQL",
+    "FastAPI",
+    "WebSockets",
+    "REST APIs",
     "PostgreSQL",
+    "Vector Databases",
     "Docker",
     "Linux",
-    "DevOps",
-    "WebSockets",
+    "Git",
+    "AWS",
   ],
   navbar: [
     { href: "/", icon: HomeIcon, label: "Home" },
@@ -63,6 +66,18 @@ export const DATA = {
   },
 
   work: [
+    {
+      company: "Blueleaf AI Innovation Studio",
+      href: "https://blueleaf.ai",
+      badges: [],
+      location: "Delhi NCR, India",
+      title: "AI Engineering Intern",
+      logoUrl: "/blueleaf.jpeg",
+      start: "May 2026",
+      end: "Jul 2026",
+      description:
+        "Designed a modular agentic OS layer and decoupled knowledge graphs to orchestrate enterprise workflows. Optimized multi-agent runtimes and retrieval pipelines by implementing context pruning to minimize token usage. Built isolated, secure microservices using MLOps workflows to enforce strict compliance boundaries.",
+    },
     {
       company: "FOSSCU-K",
       href: "https://github.com/FOSSCU-KIET",
@@ -295,11 +310,20 @@ export const DATA = {
 
   hackathons: [
     {
-      title: "PSB FinShield Hackathon, IIT Hyderabad",
-      dates: "Sept 2025",
-      location: "IIT Hyderabad",
+      title: "Surreal World Asset Builathon",
+      dates: "June 2025",
+      location: "Online",
       description:
-        "Built a graph-based fraud detection and adaptive risk scoring engine for real-time authentication — Finalist (Top 72).",
+        "Built a decentralized IP provenance & infringement detection using C2PA, watermarking, and Story Protocol to verify on-chain authenticity — Winner (1st place out of 200+ teams).",
+      win: "Winner",
+      links: [],
+    },
+    {
+      title: "Agents of the Permaweb",
+      dates: "Aug 2025",
+      location: "Online",
+      description:
+        "Built a decentralized automation layer connecting Web2 APIs to the Permaweb — Finalist (Top 6 out of 100 teams).",
       win: "Finalist",
       links: [],
     },
@@ -308,26 +332,17 @@ export const DATA = {
       dates: "Sept 2025",
       location: "Online",
       description:
-        "Developed Fraktal — a Zapier-like automation platform for Web3 using Azle & ICP — Regional Finalist (Asia).",
+        "Developed Fraktal — a Zapier-like automation platform for Web3 using Azle & ICP — Finalist (Asia-level selection).",
       win: "Finalist",
       links: [],
     },
     {
-      title: "Agents of the Permaweb",
-      dates: "Aug 2025",
-      location: "Online",
+      title: "PSB FinShield Hackathon, IIT Hyderabad",
+      dates: "Sept 2025",
+      location: "IIT Hyderabad",
       description:
-        "Built a decentralized automation layer connecting Web2 APIs to the Permaweb — Finalist (Top 12).",
+        "Built a graph-based fraud detection and adaptive risk scoring engine for real-time authentication — Finalist (Top 75 out of 2000+ teams).",
       win: "Finalist",
-      links: [],
-    },
-    {
-      title: "Surreal World Asset Builathon",
-      dates: "June 2025",
-      location: "Online",
-      description:
-        "Built a decentralized IP provenance & infringement detection using C2PA, watermarking, and Story Protocol to verify on-chain authenticity — Winner (IP Detection and Enforcement Track).",
-      win: "Winner",
       links: [],
     },
   ],
