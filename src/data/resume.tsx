@@ -8,9 +8,9 @@ export const DATA = {
   location: "New Delhi, IN",
   locationLink: "https://www.google.com/maps/place/new-delhi",
   description:
-    "CS student exploring systems, full-stack/backend engineering, Web3, and DevOps 👾 - building, learning, and open source 💚",
+    "Backend & DevOps Engineer 👾 building scalable backend systems and infrastructure.",
   summary:
-    "I'm a CS student who loves learning about systems and programming. I enjoy building projects, contributing to open-source, and diving deep into low-level programming, backend design, and DevOps. Currently working on Fraktal: a Web3 automation platform, and contributing to open source at FOSSCU-K.",
+    "I build scalable backend systems and infrastructure with a focus on performance, reliability, and systems-level design. I like going deep into how things work: from networking and kernels to databases and distributed systems.",
   avatarUrl: "/profile.jpg",
   skills: [
     "Python",
@@ -23,11 +23,26 @@ export const DATA = {
     "WebSockets",
     "REST APIs",
     "PostgreSQL",
+    "Redis",
     "Vector Databases",
     "Docker",
+    "Kubernetes",
     "Linux",
+    "eBPF",
     "Git",
     "AWS",
+    "Distributed Systems",
+    "System Design",
+  ],
+  currentlyWorking: [
+    "A sandboxed execution runtime for untrusted code (Docker, REST + WebSockets, <200ms orchestration)",
+    "Writing my own database from scratch (storage engine + indexing + query layer)",
+    "AI infrastructure + DevOps tooling for agentic systems",
+  ],
+  currentlyLearning: [
+    "eBPF-based observability and networking tooling",
+    "Distributed systems design",
+    "Low-level performance optimization (Linux internals, networking, concurrency)",
   ],
   navbar: [
     { href: "/", icon: HomeIcon, label: "Home" },

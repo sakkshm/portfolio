@@ -47,6 +47,28 @@ export default function Page() {
           <Markdown className="prose max-w-full text-pretty font-sans text-sm text-muted-foreground dark:prose-invert">
             {DATA.summary}
           </Markdown>
+          <div className="mt-4 space-y-4 text-sm text-muted-foreground">
+            <div>
+              <p className="font-semibold text-foreground">
+                Currently working on
+              </p>
+              <ul className="mt-1.5 list-disc space-y-1 pl-5">
+                {DATA.currentlyWorking.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="font-semibold text-foreground">
+                Currently learning
+              </p>
+              <ul className="mt-1.5 list-disc space-y-1 pl-5">
+                {DATA.currentlyLearning.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </BlurFade>
       </section>
       <section id="skills">
