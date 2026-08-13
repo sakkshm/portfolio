@@ -105,6 +105,30 @@ export const DATA = {
 
  projects: [
     {
+        title: "Atlas",
+        href: "https://github.com/sakkshm/atlas-ai",
+        dates: "Jul 2026",
+        active: true,
+        description:
+            "A voice-first AI assistant for Google Workspace that chains actions across Calendar, Tasks, Gmail, Contacts, and Maps via a LangGraph agent, streaming each step in real time over WebSocket.",
+        technologies: [
+            "Python", "FastAPI", "LangGraph", "Celery", "Redis", "PostgreSQL", "WebSockets", "Google OAuth2", "Gemini", "React", "TypeScript", "Docker"
+        ],
+        links: [
+            {
+                type: "GitHub",
+                href: "https://github.com/sakkshm/atlas-ai",
+                icon: <Icons.github className="size-3" />,
+            },
+            {
+                type: "Live",
+                href: "https://atlas.sakkshm.me",
+                icon: <Icons.globe className="size-3" />,
+            },
+        ],
+        image: "",
+    },
+    {
         title: "Bastion",
         href: "https://github.com/sakkshm/bastion",
         dates: "Apr 2026",
